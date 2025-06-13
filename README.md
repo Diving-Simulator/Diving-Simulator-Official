@@ -117,3 +117,30 @@ Inclui todas as diretrizes de gameplay, narrativa, assets, mecânicas e metas do
 - **Curiosos e entusiastas** de realidade virtual.
 
 ---
+
+## 👨‍💻 Equipe Responsável
+
+### 🧠 Desenvolvimento e Programação
+- **Marcos Paulo Santana Macedo**  
+  *Scrum Master · Programador Full Stack · Modelagem 3D e Testes XR*
+
+- **Gabriel Selvenca**  
+  *Desenvolvedor XR · Programador Full Stack · Programador de Interface (UI/UX) · Product Owner Adjunto · Editor de Interface e Banner*
+
+- **Nicolas Martins Veríssimo**  
+  *Programador de Interface (UI/UX) · Programador Full Stack · Especialista em Efeitos Visuais e Ambientação*
+
+### 🎨 Design, Modelagem 3D e Efeitos Visuais
+- **Bruno Fróes**  
+  *Diretor de Arte · Artista Técnico 3D · Level Designer · Coautor do GDD*
+
+- **Thiago Monteiro Oliveira**  
+  *Product Owner Principal · Designer de Efeitos Visuais e Sonoros · Modelador 3D*
+
+- **David Nycolas**  
+  *Designer UI/UX · Compositor de Trilha e Efeitos Sonoros · Coautor do GDD (Figma)*
+
+- **Daniel Barbosa**  
+  *Apoio em Apresentações · Pesquisador de Referências Visuais · Apoio na Documentação (GDD)*
+
+---
