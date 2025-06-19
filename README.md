@@ -26,55 +26,28 @@ Simular com realismo e acessibilidade a prática do mergulho profissional e cien
 
 ### 👤 Jogador
 - Suporte a **VR (com controle PlayStation 5 ou Xbox Series X)**, **teclado/mouse**;
-- Câmera controlada pelo mouse em modo desktop;
 - Jogo em primeira pessoa.
 
-### 🤲 Sistema de Interação
-- Pegar/soltar objetos com tecla `E`;
-- Interagir com objetos com clique (`Mouse Button 1`);
-- Manipulação realista com controle VR.
-
 ### 📝 Missões e Tarefas
-- De 3 a 5 missões por fase;
-- Interface de tarefas na tela (tanto em VR quanto em PC);
-- Ações completadas marcam automaticamente na UI.
+- O jogo tem 4 missões em sequência;
+- Legendas para ajudar em cada fase e para contar sobre a história;
 
 ### 🌊 Pressão Submarina (Sistema ATM)
 - 1 ATM = 10 metros de profundidade;
 - Objetos e corpos reagem à pressão conforme a profundidade (implosão, falhas, etc.);
 - Limite inspirado no Mar do Caribe (até 768.6 ATM).
 
-### 🔧 Manutenção do Submarino
-- Casco do submarino pode sofrer avarias;
-- Reparos realizados com uso de **maçarico**.
-
-### 🦈 Sistema de Ataques (Extra)
-- Inimigos marinhos, como tubarões, podem atacar;
-- O jogador pode se defender;
-- Alguns objetos podem ser transformados em itens coletáveis após o ataque.
-
 ### 🧪 Física Subaquática
 - Gravitacional e de movimentação alteradas sob água;
 - Diferente da gravidade em superfície.
-
-### ❤️ Barra de Vida (Extra)
-- A saúde é afetada por:
-  - Ataques;
-  - Falta de oxigênio;
-  - Outras situações críticas.
-
-### ☁️ Eventos Climáticos e Naturais (Extra)
-- Eventos aleatórios baseados no clima;
-- Impactam jogabilidade e ambientação.
 
 ---
 
 ## 🌍 Ambientação
 
 - O mapa foi inspirado no **Mar do Caribe**, incluindo:
-  - Buraco Caribenho (extra)
   - Fossas e vales submarinos
-  - Recifes de coral e fauna realista
+  - Recifes de coral e fauna
 
 ---
 
@@ -118,29 +91,29 @@ Inclui todas as diretrizes de gameplay, narrativa, assets, mecânicas e metas do
 
 ---
 
-## 👨‍💻 Equipe Responsável
+# 👨‍💻 Equipe Responsável
 
-### 🧠 Desenvolvimento e Programação
-- **Marcos Paulo Santana Macedo**  
+## 🧠 Desenvolvimento e Programação
+### - **[Marcos Paulo Santana Macedo](https://github.com/MarkPSM)**
   *Scrum Master · Programador Full Stack · Modelagem 3D e Testes XR*
 
-- **Gabriel Selvenca**  
+### - **[Gabriel Selvenca](https://github.com/GabrielSelvenca)**
   *Desenvolvedor XR · Programador Full Stack · Programador de Interface (UI/UX) · Product Owner Adjunto · Editor de Interface e Banner*
 
-- **Nicolas Martins Veríssimo**  
+### - **[Nicolas Martins Veríssimo](https://github.com/nclsmrts)**
   *Programador de Interface (UI/UX) · Programador Full Stack · Especialista em Efeitos Visuais e Ambientação*
 
-### 🎨 Design, Modelagem 3D e Efeitos Visuais
-- **Bruno Fróes**  
+## 🎨 Design, Modelagem 3D e Efeitos Visuais
+### - **[Bruno Fróes](https://github.com/Shamani-AlphaLeader)**
   *Diretor de Arte · Artista Técnico 3D · Level Designer · Coautor do GDD*
 
-- **Thiago Monteiro Oliveira**  
+### - **[Thiago Monteiro Oliveira](https://github.com/ThiagoMonteiro12)**
   *Product Owner Principal · Designer de Efeitos Visuais e Sonoros · Modelador 3D*
 
-- **David Nycolas**  
+### - **[David Nycolas](https://github.com/dnycolas)**
   *Designer UI/UX · Compositor de Trilha e Efeitos Sonoros · Coautor do GDD (Figma)*
 
-- **Daniel Barbosa**  
+## - **[Daniel Barbosa](https://github.com/Danielchampion5)**
   *Apoio em Apresentações · Pesquisador de Referências Visuais · Apoio na Documentação (GDD)*
 
 ---
