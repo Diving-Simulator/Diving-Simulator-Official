@@ -24,7 +24,10 @@ public class ZonaEscaneamento : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         if (!escaneado && other.CompareTag("Submarino"))
+        {
             StopAllCoroutines();
+            espera = null;
+        }
     }
 
     IEnumerator Waiting(float temp)

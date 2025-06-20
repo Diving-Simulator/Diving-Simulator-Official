@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Assets.Script.Missions.Dialog;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR;
 
@@ -12,8 +14,10 @@ public class SubmarineController : MonoBehaviour
     }
 
     public InputActionAsset inputActionsAsset;
+    public DialogManager dialogManager;
     private InputAction moveAction;
 
+    [Space(15)]
 
     [Header("Referência ao corpo visual (onde está o Rigidbody) e Camera Shaker")]
     public Transform corpoVisual;
@@ -67,6 +71,28 @@ public class SubmarineController : MonoBehaviour
 
         InputSystem.onDeviceChange += InputSystem_onDeviceChange;
         DetectarModo();
+
+        List<DialogLine> dialog = new()
+        {
+            new() { text = "Bem-vindo, piloto. Você está no comando do submarino T-17." },
+            new() { text = modoAtual == ModoControle.TecladoEMouse ?
+                "Use Shift Esquerdo para acelerar e espaço para freiar." :
+                "Use o RT / R2 para acelerar e LT / L2 para freiar." },
+            new() { text = modoAtual == ModoControle.TecladoEMouse ?
+                "W / S ou Setas para cima e baixo para inclinar o submarino para cima e para baixo." :
+                "Use o analógico esquerdo para inclinar o submarino para todas as direções com limites em cima e baixo."},
+            new() { text = modoAtual == ModoControle.TecladoEMouse ?
+                "A / D ou Setas para esquerda e direita para virar ele para um lado e para o outro." :
+                ""},
+            new() { text = modoAtual == ModoControle.TecladoEMouse ?
+                "Q / E para girar (roll) ele para um lado e para o outro." :
+                "RB / R1 ou LB / L1 para girar (roll) para um lado e para o outro."},
+            new() { text = modoAtual == ModoControle.TecladoEMouse ?
+                "Pressione F para ligar a luz. Pressione R para ligar ou desligar o modo livre." :
+                "Pressione B/⭕ para ligar a luz. Pressione Y/🔺 para ligar ou desligar o modo livre.."},
+            new() { text = "Explore as zonas marcadas no ambiente e siga os objetivos." }
+        };
+        dialogManager.ShowDialog(dialog);
     }
 
     private void InputSystem_onDeviceChange(UnityEngine.InputSystem.InputDevice device, InputDeviceChange change)
