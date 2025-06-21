@@ -27,6 +27,7 @@ Simular com realismo e acessibilidade a prática do mergulho profissional e cien
 ### 👤 Jogador
 - Suporte a **VR (com controle PlayStation 5 ou Xbox Series X)**, **teclado/mouse**;
 - Jogo em primeira pessoa.
+- Sistema de pause com congelamento de tempo.
 
 ### 📝 Missões e Tarefas
 - O jogo tem 4 missões em sequência;
