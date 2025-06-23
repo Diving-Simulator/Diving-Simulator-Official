@@ -1,5 +1,4 @@
 using Assets.Script.Missions.Dialog;
-using NUnit.Framework;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,11 +13,19 @@ public class MissionManager : MonoBehaviour
     private int actualArch = 1;
     private int totalArchs = 6;
 
+    public DialogManager dialogManager;
+
     [SerializeField]
     private List<GameObject> arcos;
 
     [SerializeField]
     private List<GameObject> Missoes;
+
+    [SerializeField]
+    private List<GameObject> Zonas;
+
+    [SerializeField]
+    private GameObject ZonaFinal;
 
     private void Start()
     {
@@ -29,15 +36,53 @@ public class MissionManager : MonoBehaviour
         MissionsManager();
     }
 
+    public void mudarZona(int zonaID)
+    {
+        if (zonaID < 0 || zonaID >= Zonas.Count)
+        {
+            Debug.LogWarning($"zonaID {zonaID} fora do intervalo. Tamanho de Zonas: {Zonas.Count}");
+            return;
+        }
+
+        foreach (var zona in Zonas)
+        {
+            zona.gameObject.SetActive(false);
+        }
+
+        Zonas[zonaID].SetActive(true);
+    }
+
     public void ScanedZone(string nomeDaZona)
     {
-        concludedZones++;
-        Debug.Log($"Zona {nomeDaZona} escaneada com sucesso. {concludedZones}/{totalZones} zonas escaneadas.");
+        List<DialogLine> dialog;
 
-        if (concludedZones >= totalZones)
+        if (nomeDaZona == "ZonaEscaneamento_Final")
         {
-            Debug.Log("Missão 1 concluída com sucesso.");
-            MissionsManager();
+            dialog = new()
+            {
+                new() { text = "Parabéns você concluíu todas as missões!" }
+            };
+            dialogManager.ShowDialog(dialog);
+        }
+        else
+        {
+            concludedZones++;
+
+            if (concludedZones >= totalZones)
+            {
+                dialog = new()
+                {
+                    new() { text = "Missão 1 concluída com sucesso!" }
+                };
+                MissionsManager();
+                dialogManager.ShowDialog(dialog);
+            }
+
+            dialog = new()
+            {
+                    new() { text = $"Zona {nomeDaZona} escaneada com sucesso. {concludedZones}/{totalZones} zonas escaneadas." }
+            };
+            mudarZona(concludedZones);
         }
     }
 
@@ -96,6 +141,7 @@ public class MissionManager : MonoBehaviour
         {
             case 1:
                 Missoes[0].SetActive(true);
+                mudarZona(concludedZones);
                 break;
             case 2:
                 Missoes[1].SetActive(true);

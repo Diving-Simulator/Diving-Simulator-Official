@@ -1,5 +1,8 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.InputSystem;
+using System.Linq;
+using UnityEngine.InputSystem.Controls;
 
 public class IntroAnimatorController : MonoBehaviour
 {
@@ -21,10 +24,22 @@ public class IntroAnimatorController : MonoBehaviour
 
     void Update()
     {
-        if (!iniciou && Input.GetMouseButtonDown(0))
+
+
+        if (Gamepad.current != null)
         {
-            iniciou = true;
-            StartCoroutine(ExecutarIntro());
+            if (!iniciou && Gamepad.current.allControls.Any(c => c is ButtonControl btn && btn.wasPressedThisFrame))
+            {
+                iniciou = true;
+                StartCoroutine(ExecutarIntro());
+            }
+        } else
+        {
+            if (!iniciou && Input.GetMouseButtonDown(0))
+            {
+                iniciou = true;
+                StartCoroutine(ExecutarIntro());
+            }
         }
 
 

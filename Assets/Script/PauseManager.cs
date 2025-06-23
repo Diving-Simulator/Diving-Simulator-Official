@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PauseManager : MonoBehaviour
 {
@@ -7,6 +9,8 @@ public class PauseManager : MonoBehaviour
     public GameObject pauseCanvas;
 
     public bool Paused { get; private set; }
+
+    public GameObject primeiroButton;
 
     void Start()
     {
@@ -27,10 +31,28 @@ public class PauseManager : MonoBehaviour
     public void TogglePause()
     {
         Paused = !Paused;
-        Time.timeScale = Paused ? 0f : 1f;
         AudioListener.pause = Paused;
 
         if (pauseCanvas != null)
+        {
             pauseCanvas.SetActive(Paused);
+            Time.timeScale = Paused ? 0 : 1;
+        }
+
+        if (Paused)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            EventSystem.current.SetSelectedGameObject(primeiroButton);
+        }
+    }
+
+    public void Sair()
+    {
+        Application.Quit();
+    }
+
+    public void Reiniciar()
+    {
+        SceneManager.LoadScene(1);
     }
 }

@@ -2267,6 +2267,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputActionsAsset: {fileID: -944628639613478452, guid: 07e1e1c05af800746a9496bb61ea861b, type: 3}
   dialogManager: {fileID: 0}
+  mainCamera: {fileID: 0}
+  pauseManagerObject: {fileID: 0}
   corpoVisual: {fileID: 5847407823954493296}
   cameraShaker: {fileID: 5003378868524717157}
   velocidadeMaxima: 35
@@ -2282,6 +2284,9 @@ MonoBehaviour:
   rollEsquerdaKey: 113
   rollDireitaKey: 101
   luzExterna: {fileID: 970806069873476938}
+  motorSubmarino: {fileID: 0}
+  volumeMin: 0.1
+  volumeMax: 1
 --- !u!1 &2129877862670785887
 GameObject:
   m_ObjectHideFlags: 0
@@ -9484,6 +9489,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shakeDuration: 0.2
   shakeMagnitude: 0.05
+  audios: []
 --- !u!4 &6610181822788930663 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1680501587, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}

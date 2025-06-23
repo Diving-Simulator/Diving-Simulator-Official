@@ -1,3 +1,5 @@
+using Assets.Script.Missions.Dialog;
+using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 
@@ -6,6 +8,7 @@ public class ZonaEscaneamento : MonoBehaviour
     public string nomeDaZona;
     public float tempoNecessario = 5f;
     public MissionManager missionManager;
+    public DialogManager dialogManager;
 
     private bool escaneado;
 
@@ -32,7 +35,11 @@ public class ZonaEscaneamento : MonoBehaviour
 
     IEnumerator Waiting(float temp)
     {
-        Debug.Log("Escaneando.");
+        List<DialogLine> dialog = new()
+        {
+            new() { text = "Escaneando" }
+        };
+        dialogManager.ShowDialog(dialog);
         yield return new WaitForSeconds(temp);
         escaneado = true;
         missionManager.ScanedZone(nomeDaZona);

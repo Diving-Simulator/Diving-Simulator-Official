@@ -16,6 +16,8 @@ public class SubmarineController : MonoBehaviour
     public InputActionAsset inputActionsAsset;
     public DialogManager dialogManager;
     private InputAction moveAction;
+    public Camera mainCamera;
+    public GameObject pauseManagerObject;
 
     [Space(15)]
 
@@ -67,6 +69,9 @@ public class SubmarineController : MonoBehaviour
         rb = corpoVisual.GetComponent<Rigidbody>();
         if (rb == null)
             Debug.LogError("⚠ Rigidbody não encontrado no corpoVisual!");
+
+        mainCamera.clearFlags = CameraClearFlags.Skybox;
+        pauseManagerObject.SetActive(true);
 
         var actionMap = inputActionsAsset.FindActionMap("Player", true);
         moveAction = actionMap.FindAction("Move", true);
