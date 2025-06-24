@@ -35,14 +35,18 @@ public class ZonaEscaneamento : MonoBehaviour
 
     IEnumerator Waiting(float temp)
     {
-        List<DialogLine> dialog = new()
-        {
-            new() { text = "Escaneando" }
-        };
-        dialogManager.ShowDialog(dialog);
-        yield return new WaitForSeconds(temp);
         escaneado = true;
+
+        List<DialogLine> inicio = new()
+        {
+            new() { text = $"Iniciando escaneamento da zona '{nomeDaZona}'..." }
+        };
+        dialogManager.ShowDialog(inicio);
+
+        yield return new WaitForSeconds(temp);
+
         missionManager.ScanedZone(nomeDaZona);
         espera = null;
     }
+
 }

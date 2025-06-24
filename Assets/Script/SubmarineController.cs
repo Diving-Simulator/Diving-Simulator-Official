@@ -18,6 +18,7 @@ public class SubmarineController : MonoBehaviour
     private InputAction moveAction;
     public Camera mainCamera;
     public GameObject pauseManagerObject;
+    public GameObject MissionsManager;
 
     [Space(15)]
 
@@ -62,7 +63,7 @@ public class SubmarineController : MonoBehaviour
     private bool luzAtiva = false;
 
     private float inputPitch, inputYaw, inputRoll;
-    private bool inputAcelerar, inputFrear;
+    private bool inputAcelerar, inputFrear, submarinoAtivo = false, liberadoParaMover = false;
 
     void Start()
     {
@@ -70,17 +71,42 @@ public class SubmarineController : MonoBehaviour
         if (rb == null)
             Debug.LogError("⚠ Rigidbody não encontrado no corpoVisual!");
 
+        DetectarModo();
+
+        if (modoAtual != ModoControle.VR && mainCamera != null)
+        {
+            var poseDriver = mainCamera.GetComponent<UnityEngine.InputSystem.XR.TrackedPoseDriver>();
+            if (poseDriver != null)
+                poseDriver.enabled = false;
+
+            Vector3 pos = mainCamera.transform.localPosition;
+            pos.y = 1.2f;
+            mainCamera.transform.localPosition = pos;
+        }
+
+        enabled = false;
+    }
+
+    public void AtivarSubmarino()
+    {
+        submarinoAtivo = true;
+        enabled = true;
+
         mainCamera.clearFlags = CameraClearFlags.Skybox;
         pauseManagerObject.SetActive(true);
 
         var actionMap = inputActionsAsset.FindActionMap("Player", true);
         moveAction = actionMap.FindAction("Move", true);
         moveAction.Enable();
-
         InputSystem.settings.disableRedundantEventsMerging = true;
-
         InputSystem.onDeviceChange += InputSystem_onDeviceChange;
-        DetectarModo();
+
+        liberadoParaMover = false;
+        dialogManager.OnDialogFinished += () =>
+        {
+            liberadoParaMover = true;
+            MissionsManager.SetActive(true);
+        };
 
         List<DialogLine> dialog = new()
         {
@@ -99,8 +125,7 @@ public class SubmarineController : MonoBehaviour
                 "RB / R1 ou LB / L1 para girar (roll) para um lado e para o outro."},
             new() { text = modoAtual == ModoControle.TecladoEMouse ?
                 "Pressione F para ligar a luz. Pressione R para ligar ou desligar o modo livre." :
-                "Pressione B/⭕ para ligar a luz. Pressione Y/🔺 para ligar ou desligar o modo livre.."},
-            new() { text = "Explore as zonas marcadas no ambiente e siga os objetivos." }
+                "Pressione B/⭕ para ligar a luz. Pressione Y/🔺 para ligar ou desligar o modo livre.." }
         };
         dialogManager.ShowDialog(dialog);
     }
@@ -119,6 +144,8 @@ public class SubmarineController : MonoBehaviour
 
     void Update()
     {
+        if (!submarinoAtivo || !liberadoParaMover) return;
+
         DetectarModo();
         LerInput();
         TratarEntradaDeTecla();
@@ -126,6 +153,8 @@ public class SubmarineController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!submarinoAtivo || !liberadoParaMover) return;
+
         if (realinhando)
         {
             RealinharVisual();

@@ -17,7 +17,7 @@ public class ButtonController : MonoBehaviour
 
     public void Jogar()
     {
-        subController.enabled = true;
+        subController.AtivarSubmarino();
         InitialCanvas.SetActive(false);
     }
 

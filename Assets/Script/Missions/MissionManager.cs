@@ -27,6 +27,12 @@ public class MissionManager : MonoBehaviour
     [SerializeField]
     private GameObject ZonaFinal;
 
+    public int GetMissaoAtual() => actualMission;
+    public int GetZonaAtualIndex() => concludedZones;
+    public int GetArcoAtualIndex() => actualArch - 1;
+
+    public GameObject Seta;
+
     private void Start()
     {
         if (Missoes.Count < 3)
@@ -34,6 +40,40 @@ public class MissionManager : MonoBehaviour
             Debug.Log("Objeto de missões incompletos.");
         }
         MissionsManager();
+        Seta.SetActive(true);
+    }
+
+    public GameObject GetZonaAtual()
+    {
+        if (concludedZones >= Zonas.Count)
+            return null;
+        return Zonas[concludedZones];
+    }
+
+    public GameObject GetArcoAtual()
+    {
+        if (actualArch - 1 >= arcos.Count)
+            return null;
+        return arcos[actualArch - 1];
+    }
+
+    public GameObject GetCoralAtivo()
+    {
+        GameObject missao3 = Missoes.Count >= 3 ? Missoes[2] : null;
+        if (missao3 == null) return null;
+
+        foreach (Transform t in missao3.transform)
+        {
+            if (t.gameObject.activeInHierarchy)
+                return t.gameObject;
+        }
+
+        return null;
+    }
+
+    public GameObject GetZonaFinal()
+    {
+        return ZonaFinal;
     }
 
     public void mudarZona(int zonaID)
@@ -54,47 +94,55 @@ public class MissionManager : MonoBehaviour
 
     public void ScanedZone(string nomeDaZona)
     {
-        List<DialogLine> dialog;
-
         if (nomeDaZona == "ZonaEscaneamento_Final")
         {
-            dialog = new()
-            {
-                new() { text = "Parabéns você concluíu todas as missões!" }
-            };
+            dialogManager.ShowDialog(new()
+        {
+            new() { text = "Parabéns, você concluiu todas as missões do mergulho com sucesso!" }
+        });
+            return;
+        }
+
+        concludedZones++;
+
+        List<DialogLine> dialog = new()
+    {
+        new() { text = $"Zona '{nomeDaZona}' escaneada com sucesso." },
+        new() { text = $"Progresso: {concludedZones}/{totalZones} zonas concluídas." }
+    };
+
+        if (concludedZones >= totalZones)
+        {
+            dialog.Add(new() { text = "Missão 1 concluída com sucesso! Preparando próxima missão..." });
             dialogManager.ShowDialog(dialog);
+            MissionsManager();
         }
         else
         {
-            concludedZones++;
-
-            if (concludedZones >= totalZones)
-            {
-                dialog = new()
-                {
-                    new() { text = "Missão 1 concluída com sucesso!" }
-                };
-                MissionsManager();
-                dialogManager.ShowDialog(dialog);
-            }
-
-            dialog = new()
-            {
-                    new() { text = $"Zona {nomeDaZona} escaneada com sucesso. {concludedZones}/{totalZones} zonas escaneadas." }
-            };
+            dialogManager.ShowDialog(dialog);
             mudarZona(concludedZones);
         }
     }
 
     public bool ValidArch(int number)
     {
+        List<DialogLine> dialog;
+
         if (number == actualArch)
         {
-            Debug.Log($"Arco {actualArch} alcançado com sucesso.");
+            dialog = new()
+            {
+                    new() { text = $"Arco {actualArch} alcançado com sucesso." }
+            };
+            dialogManager.ShowDialog(dialog);
             actualArch++;
             if (actualArch > totalArchs)
             {
-                Debug.Log("Missão 2 concluída com sucesso.");
+                dialog = new()
+                {
+                        new() { text = $"Missão 2 concluída com sucesso, parabéns!" }
+                };
+                dialogManager.ShowDialog(dialog);
                 MissionsManager();
                 return false;
             }
@@ -137,6 +185,8 @@ public class MissionManager : MonoBehaviour
             return;
         }
 
+        TextoMissoes(actualMission);
+
         switch (actualMission)
         {
             case 1:
@@ -157,6 +207,45 @@ public class MissionManager : MonoBehaviour
         }
     }
 
+    private void TextoMissoes(int idMissao)
+    {
+        List<DialogLine> dialog = new()
+        {
+            new() { text = "Missão não reconhecida, contate os desenvolvedores." }
+        };
+
+        switch (idMissao)
+        {
+            case 1:
+                dialog = new()
+                {
+                    new() { text = "Missão 1: Escaneie todas as zonas verdes espalhadas pelo fundo do oceano. Elas são esferas grandes e brilhantes em locais estratégicos." }
+                };
+                break;
+            case 2:
+                dialog = new()
+                {
+                    new() { text = "Missão 2: A navegação requer precisão agora. Passe cuidadosamente por todos os arcos de aço submersos." }
+                };
+                break;
+            case 3:
+                dialog = new()
+                {
+                    new() { text = "Missão 3: Explore a biodiversidade local procurando por corais exóticos para análise científica." }
+                };
+                break;
+            case 4:
+                dialog = new()
+                {
+                    new() { text = "Missão 4: Leve os dados coletados até a zona próxima à superfície para transmissão via satélite." }
+                };
+                break;
+            default:
+                Debug.LogWarning($"Missão {idMissao} não reconhecida.");
+                break;
+        }
+        dialogManager.ShowDialog(dialog);
+    }
 
     private void ReloadMissions()
     {

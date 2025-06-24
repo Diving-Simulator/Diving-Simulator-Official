@@ -1,8 +1,9 @@
+using Assets.Script.Missions.Dialog;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
-using Assets.Script.Missions.Dialog;
+using UnityEngine;
 
 public class DialogManager : MonoBehaviour
 {
@@ -13,11 +14,7 @@ public class DialogManager : MonoBehaviour
 
     private Queue<DialogLine> dialogQueue = new();
     private Coroutine currentCoroutine;
-
-    private void Start()
-    {
-        canvas.gameObject.SetActive(false);
-    }
+    public event Action OnDialogFinished;
 
     public void ShowDialog(List<DialogLine> lines)
     {
@@ -55,6 +52,7 @@ public class DialogManager : MonoBehaviour
 
         dialogText.text = "";
         canvas.gameObject.SetActive(false);
+        OnDialogFinished?.Invoke();
     }
 
     private List<string> BreakLongLines(string input)
