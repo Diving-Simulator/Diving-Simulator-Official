@@ -2,52 +2,98 @@
 
 public class Seta : MonoBehaviour
 {
-    private MissionManager manager;
-    private float rotationSpeed = 3f;
+    [Header("Raiz das missões")]
+    public Transform missoesRaiz;
 
-    void Start()
-    {
-        manager = FindAnyObjectByType<MissionManager>();
-    }
+    [Header("Velocidade de rotação")]
+    public float rotationSpeed = 3f;
+
+    private Transform alvoAtual;
 
     void Update()
     {
-        if (manager == null)
+        if (missoesRaiz == null)
             return;
 
-        GameObject alvo = GetAlvoAtual();
-        if (alvo == null)
+        alvoAtual = BuscarUltimoFilhoAtivo(missoesRaiz);
+        if (alvoAtual == null)
         {
-            gameObject.SetActive(false); // se não houver missão, seta some
+            gameObject.SetActive(false);
             return;
         }
 
-        gameObject.SetActive(true); // se houver missão, seta aparece
+        gameObject.SetActive(true);
 
-        Vector3 direction = alvo.transform.position - transform.position;
+        Vector3 pontoAlvo = ObterCentroVisual(alvoAtual);
+
+        Vector3 direction = pontoAlvo - transform.position;
         direction.y = 0f;
 
         if (direction.sqrMagnitude < 0.01f)
             return;
 
-        Quaternion rotacaoDesejada = Quaternion.LookRotation(direction);
-        Quaternion rotacaoAtual = Quaternion.Slerp(transform.rotation, rotacaoDesejada, rotationSpeed * Time.deltaTime);
+        Quaternion targetRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+        targetRotation *= Quaternion.Euler(0f, 90f, 0f); // eixo X é a frente da seta
 
-        Vector3 euler = rotacaoAtual.eulerAngles;
-        transform.rotation = Quaternion.Euler(0f, euler.y, 0f); // trava X e Z
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
-    GameObject GetAlvoAtual()
+    Transform BuscarUltimoFilhoAtivo(Transform pai)
     {
-        int missao = manager.GetMissaoAtual();
+        Transform ultimoAtivo = null;
 
-        switch (missao)
+        foreach (Transform filho in pai)
         {
-            case 1: return manager.GetZonaAtual();
-            case 2: return manager.GetArcoAtual();
-            case 3: return manager.GetCoralAtivo();
-            case 4: return manager.GetZonaFinal();
-            default: return null;
+            if (!filho.gameObject.activeInHierarchy)
+                continue;
+
+            Transform filhoProfundo = BuscarUltimoFilhoAtivo(filho);
+            if (filhoProfundo != null)
+            {
+                Transform maisProximo = EncontrarMaisProximo(transform.position, filho);
+                if (maisProximo != null)
+                    return maisProximo;
+
+                return filhoProfundo;
+            }
+
+            ultimoAtivo = filho;
         }
+
+        return ultimoAtivo;
+    }
+
+    Transform EncontrarMaisProximo(Vector3 origem, Transform pai)
+    {
+        Transform maisProximo = null;
+        float menorDist = float.MaxValue;
+
+        foreach (Transform filho in pai)
+        {
+            if (!filho.gameObject.activeInHierarchy)
+                continue;
+
+            float dist = Vector3.Distance(origem, ObterCentroVisual(filho));
+            if (dist < menorDist)
+            {
+                menorDist = dist;
+                maisProximo = filho;
+            }
+        }
+
+        return maisProximo;
+    }
+
+    Vector3 ObterCentroVisual(Transform alvo)
+    {
+        Collider col = alvo.GetComponentInChildren<Collider>();
+        if (col != null)
+            return col.bounds.center;
+
+        Renderer rend = alvo.GetComponentInChildren<Renderer>();
+        if (rend != null)
+            return rend.bounds.center;
+
+        return alvo.position;
     }
 }

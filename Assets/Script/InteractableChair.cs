@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using Unity.XR.CoreUtils;
+using UnityEngine;
+using UnityEngine.XR;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class InteractableChair : MonoBehaviour
 {
@@ -8,29 +11,28 @@ public class InteractableChair : MonoBehaviour
     public bool disableMovementOnSit = true;
 
     private bool isSitting = false;
-    private GameObject player;
 
     void Awake()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null)
-        {
-            Debug.Log("Tag 'Player' não encontrada no XR Origin! Jogo não é em VR.");
-            return;
-        }
-
         if (isSitting) return;
 
-        // Teleportar jogador para a posição da cadeira
-        player.transform.SetPositionAndRotation(seatPosition.position, seatPosition.rotation);
-
-        // Resetar offset acumulado do XR se existir
-        Transform offset = player.transform.Find("Camera Offset");
-        if (offset != null)
+        if (XRSettings.isDeviceActive)
         {
-            offset.localPosition = Vector3.zero;
-            offset.localRotation = Quaternion.identity;
-            Debug.Log("🔄 Offset da câmera resetado na cadeira (VR).");
+            // ✅ Modo VR ativo
+            XROrigin xrOrigin = FindAnyObjectByType<XROrigin>();
+            if (xrOrigin == null)
+            {
+                Debug.LogError("❌ XR Origin não encontrado!");
+                return;
+            }
+
+            float alturaCabeca = xrOrigin.CameraInOriginSpacePos.y;
+            Vector3 destino = seatPosition.position - new Vector3(0f, alturaCabeca - 1.5f, 0f);
+
+            xrOrigin.transform.position = destino;
+            xrOrigin.transform.rotation = Quaternion.LookRotation(seatPosition.forward, Vector3.up);
+
+            Debug.Log("✅ Jogador sentou na cadeira via XR corretamente!");
         }
 
         if (disableMovementOnSit && locomotion != null)
@@ -40,6 +42,5 @@ public class InteractableChair : MonoBehaviour
         }
 
         isSitting = true;
-        Debug.Log("Jogador sentou na cadeira via 'activated'!");
     }
 }

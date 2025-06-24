@@ -1,4 +1,5 @@
 ﻿using Assets.Script.Missions.Dialog;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -27,7 +28,7 @@ public class SubmarineController : MonoBehaviour
     public CameraShaker cameraShaker;
 
     [Header("Velocidade")]
-    [Range(0f, 35f)] public float velocidadeMaxima = 35f;
+    [Range(0f, 45f)] public float velocidadeMaxima = 35f;
     public float aceleracao = 3f;
     public float desaceleracao = 4f;
     public float recuo = 10f;
@@ -75,29 +76,81 @@ public class SubmarineController : MonoBehaviour
 
         if (modoAtual != ModoControle.VR && mainCamera != null)
         {
-            // Desabilita controle VR da câmera
             var poseDriver = mainCamera.GetComponent<UnityEngine.InputSystem.XR.TrackedPoseDriver>();
             if (poseDriver != null)
                 poseDriver.enabled = false;
 
-            // Define altura padrão para câmera normal
             Vector3 pos = mainCamera.transform.localPosition;
             pos.y = 1.2f;
             mainCamera.transform.localPosition = pos;
         }
         else if (modoAtual == ModoControle.VR && mainCamera != null)
         {
-            // Reseta possíveis offsets acumulados no VR
             Transform cameraOffset = mainCamera.transform.parent;
             if (cameraOffset != null)
             {
                 cameraOffset.localPosition = Vector3.zero;
                 cameraOffset.localRotation = Quaternion.identity;
-                Debug.Log("🔄 Offset da câmera resetado no Start (VR).");
             }
         }
 
+        if (mainCamera != null)
+        {
+            var poseDriver = mainCamera.GetComponent<UnityEngine.InputSystem.XR.TrackedPoseDriver>();
+            if (modoAtual == ModoControle.VR)
+            {
+                if (poseDriver != null && !poseDriver.enabled)
+                {
+                    poseDriver.enabled = true;
+                }
+            }
+        }
+
+        StartCoroutine(EsperarXR());
         enabled = false;
+    }
+
+    IEnumerator EsperarXR()
+    {
+        float timeout = 5f;
+        float tempo = 0f;
+
+        while (!XRSettings.isDeviceActive && tempo < timeout)
+        {
+            yield return null;
+            tempo += Time.deltaTime;
+        }
+
+        if (XRSettings.isDeviceActive)
+            Debug.Log("✅ XR inicializado corretamente.");
+        else
+            Debug.LogWarning("⚠ VR não inicializado após timeout.");
+
+        DetectarModo();
+
+        if (modoAtual == ModoControle.VR && mainCamera != null)
+        {
+            var poseDriver = mainCamera.GetComponent<UnityEngine.InputSystem.XR.TrackedPoseDriver>();
+            if (poseDriver != null && !poseDriver.enabled)
+                poseDriver.enabled = true;
+
+            Transform cameraOffset = mainCamera.transform.parent;
+            if (cameraOffset != null)
+            {
+                cameraOffset.localPosition = Vector3.zero;
+                cameraOffset.localRotation = Quaternion.identity;
+            }
+        }
+        else if (modoAtual != ModoControle.VR && mainCamera != null)
+        {
+            var poseDriver = mainCamera.GetComponent<UnityEngine.InputSystem.XR.TrackedPoseDriver>();
+            if (poseDriver != null)
+                poseDriver.enabled = false;
+
+            Vector3 pos = mainCamera.transform.localPosition;
+            pos.y = 1.2f;
+            mainCamera.transform.localPosition = pos;
+        }
     }
 
     public void AtivarSubmarino()
@@ -123,7 +176,7 @@ public class SubmarineController : MonoBehaviour
 
         List<DialogLine> dialog = new()
         {
-            new() { text = "Bem-vindo, piloto. Você está no comando do submarino T-17." },
+            new() { text = "Bem-vindo, piloto. Você está no comando do submarino HN700 Roboto." },
             new() { text = modoAtual == ModoControle.TecladoEMouse ?
                 "Use Shift Esquerdo para acelerar e espaço para freiar." :
                 "Use o RT / R2 para acelerar e LT / L2 para freiar." },
@@ -138,7 +191,7 @@ public class SubmarineController : MonoBehaviour
                 "RB / R1 ou LB / L1 para girar (roll) para um lado e para o outro."},
             new() { text = modoAtual == ModoControle.TecladoEMouse ?
                 "Pressione F para ligar a luz. Pressione R para ligar ou desligar o modo livre." :
-                "Pressione B/⭕ para ligar a luz. Pressione Y/🔺 para ligar ou desligar o modo livre.." }
+                "Pressione B/O para ligar a luz. Pressione Y/^ para ligar ou desligar o modo livre.." }
         };
         dialogManager.ShowDialog(dialog);
     }
@@ -157,9 +210,9 @@ public class SubmarineController : MonoBehaviour
 
     void Update()
     {
+        DetectarModo();
         if (!submarinoAtivo || !liberadoParaMover) return;
 
-        DetectarModo();
         LerInput();
         TratarEntradaDeTecla();
     }
@@ -329,20 +382,36 @@ public class SubmarineController : MonoBehaviour
 
     void DetectarModo()
     {
-        var novoModo =
-            XRSettings.isDeviceActive
-                ? (Gamepad.current != null ? ModoControle.VR : modoAtual)
-                : (Gamepad.current != null ? ModoControle.Controle : ModoControle.TecladoEMouse);
+        ModoControle novoModo;
+
+        bool controleValido =
+            Gamepad.current != null &&
+            Gamepad.current.added &&
+            Gamepad.current.enabled &&
+            Gamepad.current.wasUpdatedThisFrame;
+
+        if (XRSettings.isDeviceActive)
+        {
+            novoModo = controleValido ? ModoControle.VR : modoAtual;
+        }
+        else if (controleValido)
+        {
+            novoModo = ModoControle.Controle;
+        }
+        else
+        {
+            novoModo = ModoControle.TecladoEMouse;
+        }
 
         if (novoModo != modoAtual)
         {
-            Debug.Log("Mudança de modo detectada: " + novoModo);
             modoAtual = novoModo;
+            Debug.Log("Mudança de modo detectada: " + modoAtual);
         }
 
-        if (modoAtual == ModoControle.VR && Gamepad.current == null)
+        if (modoAtual == ModoControle.VR && !controleValido)
         {
-            Debug.LogError("VR ativo, mas nenhum controle detectado!");
+            Debug.LogWarning("⚠ VR ativo, mas nenhum controle funcional detectado.");
             enabled = false;
         }
     }

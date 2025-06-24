@@ -40,7 +40,7 @@ public class MissionManager : MonoBehaviour
             Debug.Log("Objeto de missões incompletos.");
         }
         MissionsManager();
-        //Seta.SetActive(true);
+        Seta.SetActive(true);
     }
 
     public GameObject GetZonaAtual()
@@ -92,24 +92,42 @@ public class MissionManager : MonoBehaviour
         Zonas[zonaID].SetActive(true);
     }
 
+    public void ScanedFinalZone()
+    {
+        List<DialogLine> dialog = new()
+        {
+            new() { text = "Parabéns você conseguiu! Agora pode entrar em modo livre de navegação!"}
+        };
+        Seta.SetActive(false);
+        DesativarTudo();
+    }
+
+    private void DesativarTudo()
+    {
+        foreach(var zona in Zonas)
+        {
+            zona.SetActive(false);
+        }
+    }
+
     public void ScanedZone(string nomeDaZona)
     {
         if (nomeDaZona == "ZonaEscaneamento_Final")
         {
             dialogManager.ShowDialog(new()
-        {
-            new() { text = "Parabéns, você concluiu todas as missões do mergulho com sucesso!" }
-        });
+            {
+                new() { text = "Parabéns, você concluiu todas as missões do mergulho com sucesso!" }
+            });
             return;
         }
 
         concludedZones++;
 
         List<DialogLine> dialog = new()
-    {
-        new() { text = $"Zona '{nomeDaZona}' escaneada com sucesso." },
-        new() { text = $"Progresso: {concludedZones}/{totalZones} zonas concluídas." }
-    };
+        {
+            new() { text = $"Zona '{nomeDaZona}' escaneada com sucesso." },
+            new() { text = $"Progresso: {concludedZones}/{totalZones} zonas concluídas." }
+        };
 
         if (concludedZones >= totalZones)
         {

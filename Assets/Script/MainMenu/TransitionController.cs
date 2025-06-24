@@ -33,13 +33,11 @@ public class IntroAnimatorController : MonoBehaviour
                 iniciou = true;
                 StartCoroutine(ExecutarIntro());
             }
-        } else
+        }
+        if (!iniciou && Input.GetMouseButtonDown(0))
         {
-            if (!iniciou && Input.GetMouseButtonDown(0))
-            {
-                iniciou = true;
-                StartCoroutine(ExecutarIntro());
-            }
+            iniciou = true;
+            StartCoroutine(ExecutarIntro());
         }
 
 
