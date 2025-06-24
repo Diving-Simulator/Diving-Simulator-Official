@@ -1,9 +1,6 @@
-using UnityEngine;
-using UnityEngine.PlayerLoop;
-using UnityEngine.XR.Interaction.Toolkit;
-using UnityEngine.XR.Interaction.Toolkit.Interactables;
+﻿using UnityEngine;
 
-public class ChairInteractable : MonoBehaviour
+public class InteractableChair : MonoBehaviour
 {
     [Header("Sentar")]
     public Transform seatPosition;
@@ -18,13 +15,24 @@ public class ChairInteractable : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         {
-            Debug.Log("Tag 'Player' n�o encontrada no XR Origin!\nJogo n�o � em VR.");
+            Debug.Log("Tag 'Player' não encontrada no XR Origin! Jogo não é em VR.");
             return;
         }
 
         if (isSitting) return;
 
+        // Teleportar jogador para a posição da cadeira
         player.transform.SetPositionAndRotation(seatPosition.position, seatPosition.rotation);
+
+        // Resetar offset acumulado do XR se existir
+        Transform offset = player.transform.Find("Camera Offset");
+        if (offset != null)
+        {
+            offset.localPosition = Vector3.zero;
+            offset.localRotation = Quaternion.identity;
+            Debug.Log("🔄 Offset da câmera resetado na cadeira (VR).");
+        }
+
         if (disableMovementOnSit && locomotion != null)
         {
             locomotion.SetActive(false);

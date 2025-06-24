@@ -40,7 +40,7 @@ public class MissionManager : MonoBehaviour
             Debug.Log("Objeto de missões incompletos.");
         }
         MissionsManager();
-        Seta.SetActive(true);
+        //Seta.SetActive(true);
     }
 
     public GameObject GetZonaAtual()

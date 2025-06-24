@@ -16,49 +16,38 @@ public class Seta : MonoBehaviour
             return;
 
         GameObject alvo = GetAlvoAtual();
-
         if (alvo == null)
+        {
+            gameObject.SetActive(false); // se não houver missão, seta some
             return;
+        }
+
+        gameObject.SetActive(true); // se houver missão, seta aparece
 
         Vector3 direction = alvo.transform.position - transform.position;
+        direction.y = 0f;
 
         if (direction.sqrMagnitude < 0.01f)
             return;
 
-        Vector3 flatDirection = new Vector3(direction.x, 0f, direction.z);
-
-        if (flatDirection.sqrMagnitude < 0.01f)
-            return;
-
-        Quaternion rotacaoDesejada = Quaternion.LookRotation(flatDirection);
+        Quaternion rotacaoDesejada = Quaternion.LookRotation(direction);
         Quaternion rotacaoAtual = Quaternion.Slerp(transform.rotation, rotacaoDesejada, rotationSpeed * Time.deltaTime);
 
         Vector3 euler = rotacaoAtual.eulerAngles;
-        transform.rotation = Quaternion.Euler(0f, euler.y, 0f);
-
+        transform.rotation = Quaternion.Euler(0f, euler.y, 0f); // trava X e Z
     }
 
     GameObject GetAlvoAtual()
     {
         int missao = manager.GetMissaoAtual();
-        GameObject alvo = null;
 
         switch (missao)
         {
-            case 1:
-                alvo = manager.GetZonaAtual();
-                break;
-            case 2:
-                alvo = manager.GetArcoAtual();
-                break;
-            case 3:
-                alvo = manager.GetCoralAtivo();
-                break;
-            case 4:
-                alvo = manager.GetZonaFinal();
-                break;
+            case 1: return manager.GetZonaAtual();
+            case 2: return manager.GetArcoAtual();
+            case 3: return manager.GetCoralAtivo();
+            case 4: return manager.GetZonaFinal();
+            default: return null;
         }
-
-        return (alvo != null && alvo.activeInHierarchy) ? alvo : null;
     }
 }

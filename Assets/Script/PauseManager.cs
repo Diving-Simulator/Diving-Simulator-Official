@@ -55,14 +55,6 @@ public class PauseManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         AudioListener.pause = false;
-
-        foreach (var obj in FindObjectsOfType<GameObject>())
-        {
-            if (obj.scene.name == null)
-                Destroy(obj);
-        }
-
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-
 }

@@ -75,13 +75,26 @@ public class SubmarineController : MonoBehaviour
 
         if (modoAtual != ModoControle.VR && mainCamera != null)
         {
+            // Desabilita controle VR da câmera
             var poseDriver = mainCamera.GetComponent<UnityEngine.InputSystem.XR.TrackedPoseDriver>();
             if (poseDriver != null)
                 poseDriver.enabled = false;
 
+            // Define altura padrão para câmera normal
             Vector3 pos = mainCamera.transform.localPosition;
             pos.y = 1.2f;
             mainCamera.transform.localPosition = pos;
+        }
+        else if (modoAtual == ModoControle.VR && mainCamera != null)
+        {
+            // Reseta possíveis offsets acumulados no VR
+            Transform cameraOffset = mainCamera.transform.parent;
+            if (cameraOffset != null)
+            {
+                cameraOffset.localPosition = Vector3.zero;
+                cameraOffset.localRotation = Quaternion.identity;
+                Debug.Log("🔄 Offset da câmera resetado no Start (VR).");
+            }
         }
 
         enabled = false;
